@@ -1,0 +1,21 @@
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+.env
+venv
+.env.
+
+.vscode
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Output
+output
+uploads
+
+
