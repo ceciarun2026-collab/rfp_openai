@@ -53,9 +53,13 @@ def run_pipeline(rfp_dir, proposals_dir, output_dir):
         "rfp_filename": rfp_raw["filename"],
         "rfp_text_preview": rfp_raw["text"][:500] + "...",
         "proposals": [
-            {"provider": p["provider"], "files": [f["filename"] for f in p["files"]]}
-            for p in proposals_raw
-        ]
+    {
+        "provider": p["provider"],
+        "num_files": len(p["files"]),
+        "files": [f["filename"] for f in p["files"]],
+    }
+    for p in proposals_raw
+]
     }, f"{output_dir}/01_extraccion.json")
 
     # ── ETAPA 2: Parsing del RFP ──────────────────────────────────
