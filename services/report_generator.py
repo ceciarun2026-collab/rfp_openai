@@ -247,13 +247,39 @@ def generate_report(
         row.cells[-1].text = f"{proposal['porcentaje']:.1f}%"
 
     for proposal in no_habilitados:
-        row = score_table.add_row()
-        row.cells[0].text = "N/H"
-        row.cells[1].text = proposal["provider"]
-        for k in range(2, len(col_names)):
-            _set_cell_bg(row.cells[k], "FDECEA")
-        row.cells[-2].text = "N/H"
-        row.cells[-1].text = "N/H"
+     row = score_table.add_row()
+
+    # Columna # y Proveedor
+    row.cells[0].text = "N/H"
+    row.cells[0].paragraphs[0].runs[0].font.color.rgb = COLOR_ROJO
+
+    row.cells[1].text = proposal["provider"]
+
+    # Precio
+    precio = proposal.get("precio_ofertado")
+    row.cells[2].text = f"${precio:,.0f}" if precio else "N/D"
+
+    # ✅ FIX: escribir los puntajes por criterio (con fondo rojo claro)
+    desglose = {d["id"]: d for d in proposal.get("desglose_puntaje", [])}
+    for j, criterio in enumerate(criterios_cal, 3):
+        d = desglose.get(criterio["id"], {})
+        pts = d.get("puntaje_obtenido", 0)
+        cell = row.cells[j]
+        _set_cell_bg(cell, "FDECEA")  # fondo rojo claro
+        cell.text = f"{pts:.2f}" if pts is not None else "—"
+        cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    # ✅ FIX: mostrar puntaje total y % reales en lugar de "N/H"
+    cell_total = row.cells[-2]
+    _set_cell_bg(cell_total, "FDECEA")
+    cell_total.text = f"{proposal['puntaje_total']:.2f}"
+    cell_total.paragraphs[0].runs[0].bold = True
+    cell_total.paragraphs[0].runs[0].font.color.rgb = COLOR_ROJO
+
+    cell_pct = row.cells[-1]
+    _set_cell_bg(cell_pct, "FDECEA")
+    cell_pct.text = f"{proposal['porcentaje']:.1f}%"
+    cell_pct.paragraphs[0].runs[0].font.color.rgb = COLOR_ROJO
 
     doc.add_page_break()
 
@@ -282,7 +308,7 @@ def generate_report(
                 run.font.color.rgb = COLOR_VERDE if c.get("cumple") else COLOR_ROJO
                 bullet.add_run(c.get("evidencia", "Sin evidencia encontrada"))
 
-        if proposal["habilitado"] and proposal.get("desglose_puntaje"):
+        if proposal.get("desglose_puntaje"):
             doc.add_paragraph()
             doc.add_paragraph("Puntaje por criterio:", style="Intense Quote")
             for d in proposal["desglose_puntaje"]:

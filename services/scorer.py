@@ -64,7 +64,7 @@ def score_proposals(evaluations: list, rfp_data: dict) -> list:
         cal = ev.get("calificacion", {})
         desglose = []
         puntaje_total = 0.0
-
+        
         # 🔹 HABILITACIÓN REAL
         habilitacion = ev.get("habilitacion", {})
         habilitado = habilitacion.get("habilitado", False)
