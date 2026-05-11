@@ -11,9 +11,13 @@ import json
 import re
 from openai import OpenAI
 from dotenv import load_dotenv
+import os
+from pathlib import Path
 
-load_dotenv()
-client = OpenAI()
+# Cargar .env con ruta absoluta para compatibilidad con Streamlit
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")
+_api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=_api_key)
 MODEL = "gpt-4o-mini"
 
 
